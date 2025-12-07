@@ -197,7 +197,7 @@ function kirimLaporan() {
     });
 
     // SEND TO WHATSAPP
-    let teks = `*Laporan Kehadiran Kelas 7A*%0A%0A`;
+    let teks = `*Laporan Kehadiran Kelas 9A*%0A%0A`;
     teks += `Mapel: ${mapel}%0A`;
     teks += `Guru: ${guru}%0A`;
     teks += `Hari: ${hari}%0A`;
@@ -205,10 +205,10 @@ function kirimLaporan() {
 
     siswa.forEach((nama, i) => {
         let st = presensi[i];
-        let simbol = st === "Hadir" ? "✔"
-                   : st === "Sakit" ? "[S]"
-                   : st === "Izin" ? "[i]"
-                   : "[A]";
+        let simbol = st === "Hadir" ? "%E2%9C%85"
+                   : st === "Sakit" ? "%F0%9F%8F%A5"
+                   : st === "Izin" ? "%F0%9F%93%9D"
+                   : "[%E2%9D%8C]";
 
         let tampil;
         if (st === "Absen") {
