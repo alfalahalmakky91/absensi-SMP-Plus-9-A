@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Presensi Kelas 9A</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #dce7ff;
+        padding: 20px;
+    }
+
+    .card {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 800px;
+        margin: 20px auto;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .header-card {
+        background: linear-gradient(135deg, #4a6cf7, #6aa8ff);
+        color: white;
+        text-align: center;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .header-card h1 {
+        margin: 0;
+        font-size: 28px;
+    }
+    
+    .header-card h3 {
+        margin: 5px 0 0 0;
+        font-weight: normal;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 15px;
+    }
+
+    select, input {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        border-radius: 6px;
+        border: 1px solid #aaa;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+    .btn {
+        background: #0066ff;
+        color: white;
+        padding: 12px 15px;
+        border: none;
+        margin-top: 20px;
+        width: 100%;
+        font-size: 18px;
+        cursor: pointer;
+        border-radius: 8px;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+    }
+
+    .btn:hover {
+        background: #004fd4;
+    }
+
+    .title-section {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        margin-top: 10px;
+        border-left: 5px solid #4a6cf7;
+        padding-left: 10px;
+    }
+</style>
+
+</head>
+<body>
+
+<!-- HEADER DALAM KOTAK -->
+<div class="header-card">
+    <h1>Presensi Kelas 9A</h1>
+    <h3>SMP Plus Al-Falah Al-Makky</h3>
+</div>
+
+<!-- INFORMASI PRESENSI -->
+<div class="card">
+
+    <div class="title-section">Informasi Presensi</div>
+
+    <label>Mapel:</label>
+    <input type="text" id="mapel">
+
+    <label>Nama Guru:</label>
+    <input type="text" id="nama_guru">
+
+    <label>Hari & Tanggal:</label>
+    <input type="text" id="hari_tanggal">
+
+    <label>Materi:</label>
+    <input type="text" id="materi">
+
+</div>
+
+<!-- KEHADIRAN SISWA -->
+<div class="card">
+
+    <div class="title-section">Kehadiran Siswa</div>
+
+    <div id="siswaList"></div>
+
+    <button class="btn" onclick="kirimLaporan()">Kirim Laporan</button>
+
+</div>
+
+
+<script>
+// ================================
+// DAFTAR SISWA
+// ================================
+const siswa = [
+  "A. ABU SUFYAN R.M.",
+  "A. NURUL ULA ALFARKHANI",
+  "A. WILDAN NASRULLAH",
+  "ABAY AMROE RAFAEL HARIONO",
+  "ABDUL AZIZ ALHAMDIN",
+  "AHMAD JAUHARUL ANWAR",
+  "ANDIK FIRMANSYAH",
+  "AYATULLAH KAIZAMI",
+  "DZUL QARNAIN ALBAB",
+  "FAJRI HILAL RAMADHAN",
+  "FALIQUL HASBI WANAWA",
+  "HABIBI NOVAKA S",
+  "HAMDAN KHOIRUL AZZAM",
+  "M. KAISAN NAUFAL",
+  "M. NUR RAIHAN",
+  "M. RIFAL SAIFUL I.",
+  "M. SHOBRI FADHILUL H.",
+  "MANAHIJUL IMDAD",
+  "MOCH ARDI RIANSYAH",
+  "MUHAMMAD SULTHON",
+  "OKKA DLIYAUS",
+  "RAIHAN AFRA ARROHMAN",
+  "YUDHISTIRA RESTU P."
+];
+
+// =====================================
+// GENERATE LIST SISWA + DROPDOWN
+// =====================================
+let html = "";
+siswa.forEach((nama, i) => {
+    html += `
+      <label>${nama}</label>
+      <select id="s${i}">
+          <option value="Hadir">Hadir</option>
+          <option value="Sakit">Sakit</option>
+          <option value="Izin">Izin</option>
+          <option value="Absen">Absen</option>
+      </select>
+    `;
+});
+document.getElementById("siswaList").innerHTML = html;
+
+
+// ================================
+// FUNGSI KIRIM LAPORAN
+// ================================
+function kirimLaporan() {
+
+    let mapel = document.getElementById("mapel").value;
+    let guru = document.getElementById("nama_guru").value;
+    let hari = document.getElementById("hari_tanggal").value;
+    let materi = document.getElementById("materi").value;
+
+    let presensi = siswa.map((_, i) => document.getElementById("s" + i).value);
+
+    // SEND TO GOOGLE SHEETS (URL DIUBAH)
+    fetch("https://script.google.com/macros/s/AKfycby74VQmmOe1bHa5Cix7TMgMR_PHMoJaz3ysWIk7zJe9RNYu6bfkmXA-qjU_qjuSL7G80w/exec", {
+        method: "POST",
+        body: JSON.stringify({
+            mapel: mapel,
+            nama_guru: guru,
+            hari_tanggal: hari,
+            materi: materi,
+            presensi: presensi
+        })
+    });
+
+    // SEND TO WHATSAPP
+    let teks = `*Laporan Kehadiran Kelas 7A*%0A%0A`;
+    teks += `Mapel: ${mapel}%0A`;
+    teks += `Guru: ${guru}%0A`;
+    teks += `Hari: ${hari}%0A`;
+    teks += `Materi: ${materi}%0A%0A`;
+
+    siswa.forEach((nama, i) => {
+        let st = presensi[i];
+        let simbol = st === "Hadir" ? "✔"
+                   : st === "Sakit" ? "[S]"
+                   : st === "Izin" ? "[i]"
+                   : "[A]";
+
+        let tampil;
+        if (st === "Absen") {
+            tampil = `*${nama}*`;       // Tebal
+        } else if (st === "Sakit" || st === "Izin") {
+            tampil = `_${nama}_`;       // Miring
+        } else {
+            tampil = nama;              // Normal
+        }
+
+        teks += `${tampil}: ${simbol}%0A`;
+    });
+
+    window.location.href = "https://wa.me/6282223331745?text=" + teks;
+}
+</script>
+
+</body>
+</html>
